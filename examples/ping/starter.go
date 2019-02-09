@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go_pocs/aclow"
+	aclow "aclow"
 	"net/url"
 	"sync"
 )

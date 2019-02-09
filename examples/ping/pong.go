@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
-	aclow "go_pocs/aclow"
+	aclow "aclow"
+	"log"
 	"time"
 )
 
@@ -15,7 +15,7 @@ func (t *Pong) Start(app *aclow.App) {}
 func (t *Pong) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {
 	count := msg.Body.(int64)
 
-	fmt.Print("pong ", count)
+	log.Print("pong ", count)
 
 	time.Sleep(1 * time.Second)
 	if count >= 1000 {
