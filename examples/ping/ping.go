@@ -12,7 +12,7 @@ func (t *Ping) Address() string { return "ping" }
 
 func (t *Ping) Start(app *aclow.App) {
 	time.Sleep(1 * time.Second)
-	app.Publish("ping", aclow.Message{Body: int64(0)})
+	app.Publish("module_name@ping", aclow.Message{Body: int64(0)})
 }
 
 func (t *Ping) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {
@@ -24,5 +24,5 @@ func (t *Ping) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, err
 	if count >= 1000 {
 		return msg, nil
 	}
-	return call("pong", aclow.Message{Body: count + 1})
+	return call("module_name@pong", aclow.Message{Body: count + 1})
 }

@@ -22,5 +22,5 @@ func (t *Pong) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, err
 		return msg, nil
 	}
 
-	return call("ping", aclow.Message{Body: count + 1})
+	return call("module_name@ping", aclow.Message{Body: count + 1})
 }

@@ -12,7 +12,7 @@ func main() {
 	wg.Add(1)
 
 	startOpt := aclow.StartOptions{
-		ModuleName:    "module",
+		ModuleName:    "module_name",
 		Host:          "localhost",
 		Port:          4222,
 		ClusterPort:   8222,

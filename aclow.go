@@ -72,7 +72,7 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 func (a *App) subscribeAll(moduleName string, nodes []Node) {
 	for i, n := range nodes {
 		go func(nodeIndex int, n Node) {
-			nodeAddress := n.Address()
+			nodeAddress := moduleName + "@" + n.Address()
 			a.logIt("starting ", nodeAddress, " ", nodeIndex)
 			n.Start(a)
 			_, err := a.conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
