@@ -31,9 +31,9 @@ type Node interface {
 
 type App struct {
 	opt       StartOptions
-	conn      *nats.EncodedConn
-	config    map[string]*interface{}
-	resources map[string]interface{}
+	Conn      *nats.EncodedConn
+	Config    map[string]*interface{}
+	Resources map[string]interface{}
 }
 
 type Message struct {
@@ -64,7 +64,7 @@ func (a *App) startServer() {
 
 func (a *App) startClient() {
 	nc, err := nats.Connect(fmt.Sprintf("localhost:%d", a.opt.Port))
-	a.conn, _ = nats.NewEncodedConn(nc, nats.GOB_ENCODER)
+	a.Conn, _ = nats.NewEncodedConn(nc, nats.GOB_ENCODER)
 
 	if err != nil {
 		log.Fatal(err)
@@ -72,7 +72,7 @@ func (a *App) startClient() {
 }
 
 func (a *App) Publish(address string, msg Message) {
-	a.conn.Publish(address, msg)
+	a.Conn.Publish(address, msg)
 }
 
 func (a *App) RegisterModule(moduleName string, nodes []Node) {
@@ -87,14 +87,14 @@ func (a *App) subscribeAll(moduleName string, nodes []Node) {
 			nodeAddress := moduleName + "@" + n.Address()
 			a.logIt("starting ", nodeAddress, " ", nodeIndex)
 			n.Start(a)
-			_, err := a.conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
+			_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
 				a.logIt("running ", nodeAddress, " ", nodeIndex)
 
 				go func(nodeAddress string, nodeIndex int, msg Message) {
 					caller := func(address string, d Message) (Message, error) {
 						a.logIt(nodeAddress, " ", nodeIndex, " calling ", address)
 						var r Message
-						err := a.conn.Request(address, d, &r, time.Second*30)
+						err := a.Conn.Request(address, d, &r, time.Second*30)
 						if r.Err != nil {
 							return Message{}, r.Err
 						}
@@ -107,11 +107,11 @@ func (a *App) subscribeAll(moduleName string, nodes []Node) {
 						a.logIt(nodeAddress, " ", nodeIndex, " ", err.Error())
 						if reply != "" {
 							a.logIt(nodeAddress, " ", nodeIndex, " replying error")
-							a.conn.Publish(reply, Message{Err: err})
+							a.Conn.Publish(reply, Message{Err: err})
 						}
 					} else if reply != "" {
 						a.logIt(nodeAddress, " ", nodeIndex, " replying success")
-						a.conn.Publish(reply, result)
+						a.Conn.Publish(reply, result)
 					}
 				}(nodeAddress, nodeIndex, msg)
 

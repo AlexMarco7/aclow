@@ -10,13 +10,13 @@
             "",
             "type ${1:Name} struct{}",
             "",
-            "func (t *${1:Name}) Address() string { return \"${1/(.+)([A-Z])/${1:/downcase}_${2:/downcase}/}\" }",
+            "func (n *${1:Name}) Address() string { return \"${1/(.+)([A-Z])/${1:/downcase}_${2:/downcase}/}\" }",
             "",
-            "func (t *${1:Name}) Start(app *aclow.App) {",
+            "func (n *${1:Name}) Start(app *aclow.App) {",
             "",
             "}",
             "",
-            "func (t *${1:Name}) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {",
+            "func (n *${1:Name}) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {",
             "    return aclow.Message{}, nil",
             "}"
             
