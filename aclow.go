@@ -44,6 +44,8 @@ type Message struct {
 
 func (a *App) Start(opt StartOptions) {
 	a.opt = opt
+	a.Config = make(map[string]interface{})
+	a.Resources = make(map[string]interface{})
 	a.startServer()
 	a.startClient()
 }
