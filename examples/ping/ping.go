@@ -1,9 +1,10 @@
 package main
 
 import (
-	aclow "aclow"
 	"log"
 	"time"
+
+	"github.com/AlexMarco7/aclow"
 )
 
 type Ping struct{}

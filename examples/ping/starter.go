@@ -1,9 +1,10 @@
 package main
 
 import (
-	aclow "aclow"
 	"net/url"
 	"sync"
+
+	"github.com/AlexMarco7/aclow"
 )
 
 func main() {
