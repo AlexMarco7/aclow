@@ -33,7 +33,7 @@ type App struct {
 	opt       StartOptions
 	Conn      *nats.EncodedConn
 	Config    map[string]interface{}
-	Resources map[string]*interface{}
+	Resources map[string]*(interface{})
 }
 
 type Message struct {
