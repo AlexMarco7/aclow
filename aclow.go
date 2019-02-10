@@ -32,8 +32,8 @@ type Node interface {
 type App struct {
 	opt       StartOptions
 	Conn      *nats.EncodedConn
-	Config    map[string]*interface{}
-	Resources map[string]interface{}
+	Config    map[string]interface{}
+	Resources map[string]*interface{}
 }
 
 type Message struct {
