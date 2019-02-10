@@ -2,15 +2,11 @@ package main
 
 import (
 	"net/url"
-	"sync"
 
 	"github.com/AlexMarco7/aclow"
 )
 
 func main() {
-
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
 
 	startOpt := aclow.StartOptions{
 		ModuleName:    "module_name",
@@ -24,14 +20,12 @@ func main() {
 
 	var app = &aclow.App{}
 
-	app.StartServer(startOpt)
-
-	app.StartClient()
+	app.Start(startOpt)
 
 	app.RegisterModule("module_name", []aclow.Node{
 		&Ping{},
 		&Pong{},
 	})
 
-	wg.Wait()
+	app.Wait()
 }

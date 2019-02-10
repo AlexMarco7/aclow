@@ -5,9 +5,10 @@ import (
 	"log"
 	"net/url"
 	"runtime"
+	"sync"
 	"time"
 
-	"github.com/nats-io/gnatsd/server"
+	server "github.com/nats-io/gnatsd/server"
 	nats "github.com/nats-io/go-nats"
 )
 
@@ -41,8 +42,19 @@ type Message struct {
 	Err    error
 }
 
-func (a *App) StartServer(opt StartOptions) {
+func (a *App) Start(opt StartOptions) {
 	a.opt = opt
+	a.startServer()
+	a.startClient()
+}
+
+func (a *App) Wait() {
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	wg.Wait()
+}
+
+func (a *App) startServer() {
 	server := a.createServer(a.opt)
 
 	go server.Start()
@@ -50,7 +62,7 @@ func (a *App) StartServer(opt StartOptions) {
 	time.Sleep(time.Second * 1)
 }
 
-func (a *App) StartClient() {
+func (a *App) startClient() {
 	nc, err := nats.Connect(fmt.Sprintf("localhost:%d", a.opt.Port))
 	a.conn, _ = nats.NewEncodedConn(nc, nats.GOB_ENCODER)
 
@@ -119,7 +131,7 @@ func (a *App) logIt(values ...interface{}) {
 
 func (a *App) createServer(opt StartOptions) *server.Server {
 
-	s, err := server.NewServer(&server.Options{
+	s := server.New(&server.Options{
 		Host:   opt.Host,
 		Port:   opt.Port,
 		Routes: opt.ClusterRoutes,
@@ -127,10 +139,6 @@ func (a *App) createServer(opt StartOptions) *server.Server {
 			Port: opt.ClusterPort,
 		},
 	})
-
-	if err != nil || s == nil {
-		panic(fmt.Sprintf("No NATS Server object returned: %v", err))
-	}
 
 	return s
 
