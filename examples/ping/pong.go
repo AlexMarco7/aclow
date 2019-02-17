@@ -9,7 +9,7 @@ import (
 
 type Pong struct{}
 
-func (t *Pong) Address() string { return "pong" }
+func (t *Pong) Address() []string { return []string{"pong"} }
 
 func (t *Pong) Start(app *aclow.App) {}
 

@@ -23,7 +23,7 @@ type StartOptions struct {
 type Caller = func(a string, d Message) (Message, error)
 
 type Node interface {
-	Address() string
+	Address() []string
 	Start(app *App)
 	Execute(msg Message, call Caller) (Message, error)
 }
@@ -104,38 +104,41 @@ func (a *App) Call(address string, d Message) (Message, error) {
 func (a *App) RegisterModule(moduleName string, nodes []Node) {
 	for _, n := range nodes {
 		go func(n Node) {
-			nodeAddress := moduleName + "@" + n.Address()
-			a.logIt("starting ", nodeAddress)
+			for _, addr := range n.Address() {
+				nodeAddress := moduleName + "@" + addr
+				a.logIt("starting ", nodeAddress)
 
-			a.NodeMap[nodeAddress] = n
+				a.NodeMap[nodeAddress] = n
 
-			_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
-				a.logIt("running ", nodeAddress)
+				_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
+					a.logIt("running ", nodeAddress)
 
-				go func(msg Message) {
-					caller := a.makeCaller(nodeAddress)
+					go func(msg Message) {
+						caller := a.makeCaller(nodeAddress)
 
-					result, err := n.Execute(msg, caller)
+						result, err := n.Execute(msg, caller)
 
-					if err != nil {
-						a.logIt(nodeAddress, " ", err.Error())
-						if reply != "" {
-							a.logIt(nodeAddress, " replying error")
-							a.Conn.Publish(reply, Message{Err: err})
+						if err != nil {
+							a.logIt(nodeAddress, " ", err.Error())
+							if reply != "" {
+								a.logIt(nodeAddress, " replying error")
+								a.Conn.Publish(reply, Message{Err: err})
+							}
+						} else if reply != "" {
+							a.logIt(nodeAddress, " replying success")
+							a.Conn.Publish(reply, result)
 						}
-					} else if reply != "" {
-						a.logIt(nodeAddress, " replying success")
-						a.Conn.Publish(reply, result)
-					}
-				}(msg)
+					}(msg)
 
-			})
+				})
 
-			if err != nil {
-				println(err.Error)
+				if err != nil {
+					println(err.Error)
+				}
 			}
 
 			n.Start(a)
+
 		}(n)
 	}
 }

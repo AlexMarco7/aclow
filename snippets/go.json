@@ -12,7 +12,7 @@
             "    app *aclow.App",
             "}",
             "",
-            "func (n *${1:Name}) Address() string { return \"${1/(.+)([A-Z])/${1:/downcase}_${2:/downcase}/}\" }",
+            "func (n *${1:Name}) Address() []string { return []string{\"${1/(.+)([A-Z])/${1:/downcase}_${2:/downcase}/}\"} }",
             "",
             "func (n *${1:Name}) Start(app *aclow.App) {",
             "    n.app = app",
