@@ -9,6 +9,7 @@ import (
 func main() {
 
 	startOpt := aclow.StartOptions{
+		Debug:         true,
 		ModuleName:    "module_name",
 		Host:          "localhost",
 		Port:          4222,
