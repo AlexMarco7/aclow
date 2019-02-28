@@ -112,46 +112,46 @@ func (a *App) Call(address string, msg Message) (Message, error) {
 
 func (a *App) RegisterModule(moduleName string, nodes []Node) {
 	for _, n := range nodes {
-		go func(n Node) {
-			for _, addr := range n.Address() {
-				nodeAddress := moduleName + "@" + addr
-				a.logIt("starting ", nodeAddress)
+		//go func(n Node) {
+		for _, addr := range n.Address() {
+			nodeAddress := moduleName + "@" + addr
+			a.logIt("starting ", nodeAddress)
 
-				a.NodeMap[nodeAddress] = n
+			a.NodeMap[nodeAddress] = n
 
-				if !a.opt.Local {
-					_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
-						a.logIt("running ", nodeAddress)
+			if !a.opt.Local {
+				_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
+					a.logIt("running ", nodeAddress)
 
-						go func(msg Message) {
-							caller := a.makeCaller(nodeAddress)
+					go func(msg Message) {
+						caller := a.makeCaller(nodeAddress)
 
-							result, err := n.Execute(msg, caller)
+						result, err := n.Execute(msg, caller)
 
-							if err != nil {
-								a.logIt(nodeAddress, " ", err.Error())
-								if reply != "" {
-									a.logIt(nodeAddress, " replying error")
-									a.Conn.Publish(reply, Message{Err: err})
-								}
-							} else if reply != "" {
-								a.logIt(nodeAddress, " replying success")
-								a.Conn.Publish(reply, result)
+						if err != nil {
+							a.logIt(nodeAddress, " ", err.Error())
+							if reply != "" {
+								a.logIt(nodeAddress, " replying error")
+								a.Conn.Publish(reply, Message{Err: err})
 							}
-						}(msg)
+						} else if reply != "" {
+							a.logIt(nodeAddress, " replying success")
+							a.Conn.Publish(reply, result)
+						}
+					}(msg)
 
-					})
+				})
 
-					if err != nil {
-						println(err.Error)
-					}
+				if err != nil {
+					println(err.Error)
 				}
-
 			}
 
-			n.Start(a)
+		}
 
-		}(n)
+		n.Start(a)
+
+		//}(n)
 	}
 }
 
