@@ -155,3 +155,34 @@ func (a *App) logIt(values ...interface{}) {
 		log.Print(values...)
 	}
 }
+
+func BodyAsString(r Message, err error) string {
+	check(err)
+	return r.Body.(string)
+}
+
+func BodyAsFloat64(r Message, err error) float64 {
+	check(err)
+	return r.Body.(float64)
+}
+
+func BodyAsInt64(r Message, err error) int64 {
+	check(err)
+	return r.Body.(int64)
+}
+
+func BodyAsBool(r Message, err error) bool {
+	check(err)
+	return r.Body.(bool)
+}
+
+func Body(r Message, err error) interface{} {
+	check(err)
+	return r.Body
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
