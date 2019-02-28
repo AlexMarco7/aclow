@@ -12,7 +12,7 @@ import (
 )
 
 type StartOptions struct {
-	ModuleName    string
+	Local         bool
 	Debug         bool
 	Host          string
 	Port          int
@@ -47,8 +47,11 @@ func (a *App) Start(opt StartOptions) {
 	a.Config = make(map[string]interface{})
 	a.Resources = make(map[string]interface{})
 	a.NodeMap = make(map[string]Node)
-	a.startServer()
-	a.startClient()
+
+	if !opt.Local {
+		a.startServer()
+		a.startClient()
+	}
 }
 
 func (a *App) Wait() {
@@ -89,7 +92,7 @@ func (a *App) Call(address string, d Message) (Message, error) {
 	var r Message
 	var err error
 	localNode := a.NodeMap[address]
-	if localNode == nil {
+	if localNode == nil && !a.opt.Local {
 		err = a.Conn.Request(address, d, &r, time.Second*30)
 		if r.Err != nil {
 			return Message{}, r.Err
@@ -110,31 +113,34 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 
 				a.NodeMap[nodeAddress] = n
 
-				_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
-					a.logIt("running ", nodeAddress)
+				if !a.opt.Local {
+					_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
+						a.logIt("running ", nodeAddress)
 
-					go func(msg Message) {
-						caller := a.makeCaller(nodeAddress)
+						go func(msg Message) {
+							caller := a.makeCaller(nodeAddress)
 
-						result, err := n.Execute(msg, caller)
+							result, err := n.Execute(msg, caller)
 
-						if err != nil {
-							a.logIt(nodeAddress, " ", err.Error())
-							if reply != "" {
-								a.logIt(nodeAddress, " replying error")
-								a.Conn.Publish(reply, Message{Err: err})
+							if err != nil {
+								a.logIt(nodeAddress, " ", err.Error())
+								if reply != "" {
+									a.logIt(nodeAddress, " replying error")
+									a.Conn.Publish(reply, Message{Err: err})
+								}
+							} else if reply != "" {
+								a.logIt(nodeAddress, " replying success")
+								a.Conn.Publish(reply, result)
 							}
-						} else if reply != "" {
-							a.logIt(nodeAddress, " replying success")
-							a.Conn.Publish(reply, result)
-						}
-					}(msg)
+						}(msg)
 
-				})
+					})
 
-				if err != nil {
-					println(err.Error)
+					if err != nil {
+						println(err.Error)
+					}
 				}
+
 			}
 
 			n.Start(a)
