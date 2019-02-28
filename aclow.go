@@ -85,22 +85,28 @@ func (a *App) startClient() {
 }
 
 func (a *App) Publish(address string, msg Message) {
-	a.Conn.Publish(address, msg)
+	localNode := a.NodeMap[address]
+	if localNode == nil && !a.opt.Local {
+		a.Conn.Publish(address, msg)
+	} else {
+		a.logIt("running ", address)
+		localNode.Execute(msg, a.makeCaller(address))
+	}
 }
 
-func (a *App) Call(address string, d Message) (Message, error) {
+func (a *App) Call(address string, msg Message) (Message, error) {
 	var r Message
 	var err error
 	localNode := a.NodeMap[address]
 	if localNode == nil && !a.opt.Local {
-		err = a.Conn.Request(address, d, &r, time.Second*30)
+		err = a.Conn.Request(address, msg, &r, time.Second*30)
 		if r.Err != nil {
 			return Message{}, r.Err
 		}
 		return r, err
 	} else {
 		a.logIt("running ", address)
-		return localNode.Execute(d, a.makeCaller(address))
+		return localNode.Execute(msg, a.makeCaller(address))
 	}
 }
 
