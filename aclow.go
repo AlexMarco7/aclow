@@ -88,6 +88,9 @@ func (a *App) Publish(address string, msg Message) {
 	localNode := a.NodeMap[address]
 	if localNode == nil && !a.opt.Local {
 		a.Conn.Publish(address, msg)
+	} else if localNode == nil {
+		err := fmt.Errorf("Address '%s' not fouund!", address)
+		log.Println(err)
 	} else {
 		a.logIt("running ", address)
 		localNode.Execute(msg, a.makeCaller(address))
@@ -104,6 +107,8 @@ func (a *App) Call(address string, msg Message) (Message, error) {
 			return Message{}, r.Err
 		}
 		return r, err
+	} else if localNode == nil {
+		return Message{}, fmt.Errorf(fmt.Sprintf("Address '%s' not fouund!", address))
 	} else {
 		a.logIt("running ", address)
 		return localNode.Execute(msg, a.makeCaller(address))
