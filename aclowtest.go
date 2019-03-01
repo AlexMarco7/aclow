@@ -6,7 +6,7 @@ type Tester struct {
 	assertFunc func(Message, error)
 }
 
-func (t *Tester) test(module string, node Node) {
+func (t *Tester) Test(module string, node Node) {
 	t.app = &App{}
 
 	t.app.Start(StartOptions{
@@ -18,21 +18,21 @@ func (t *Tester) test(module string, node Node) {
 	t.app.RegisterModule(module, []Node{node})
 }
 
-func (t *Tester) mock(module string, address string, mock func(Message) (Message, error)) {
+func (t *Tester) Mock(module string, address string, mock func(Message) (Message, error)) {
 	t.app.RegisterModule(module, []Node{&MockNode{
 		MockedAddress: address,
 		Mock:          mock,
 	}})
 }
 
-func (t *Tester) run(msg Message) {
+func (t *Tester) Run(msg Message) {
 	result, err := t.app.Call(t.address, msg)
 	if t.assertFunc != nil {
 		t.assertFunc(result, err)
 	}
 }
 
-func (t *Tester) assert(assertFunc func(Message, error)) {
+func (t *Tester) Assert(assertFunc func(Message, error)) {
 	t.assertFunc = assertFunc
 }
 
