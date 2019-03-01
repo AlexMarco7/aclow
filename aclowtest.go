@@ -1,9 +1,14 @@
 package aclow
 
+import "testing"
+
 type Tester struct {
-	app        *App
-	address    string
-	assertFunc func(Message, error)
+	app         *App
+	address     string
+	module      string
+	assertFunc  func(Message, error)
+	mocks       map[string]bool
+	calledMocks map[string]bool
 }
 
 func (t *Tester) Test(module string, node Node) {
@@ -14,19 +19,28 @@ func (t *Tester) Test(module string, node Node) {
 	})
 
 	t.address = node.Address()[0]
+	t.module = module
 
 	t.app.RegisterModule(module, []Node{node})
 }
 
 func (t *Tester) Mock(module string, address string, mock func(Message) (Message, error)) {
+	t.mocks[module+"@"+address] = true
 	t.app.RegisterModule(module, []Node{&MockNode{
+		Tester:        t,
+		MockedModule:  module,
 		MockedAddress: address,
 		Mock:          mock,
 	}})
 }
 
-func (t *Tester) Run(msg Message) {
-	result, err := t.app.Call(t.address, msg)
+func (t *Tester) Run(msg Message, testing *testing.T) {
+	result, err := t.app.Call(t.module+"@"+t.address, msg)
+	for k := range t.mocks {
+		if !t.calledMocks[k] {
+			testing.Errorf("%s wasn't called!", k)
+		}
+	}
 	if t.assertFunc != nil {
 		t.assertFunc(result, err)
 	}
@@ -37,14 +51,17 @@ func (t *Tester) Assert(assertFunc func(Message, error)) {
 }
 
 type MockNode struct {
+	Tester        *Tester
+	MockedModule  string
 	MockedAddress string
 	Mock          func(Message) (Message, error)
 }
 
-func (t *MockNode) Address() []string { return []string{t.MockedAddress} }
+func (m *MockNode) Address() []string { return []string{m.MockedAddress} }
 
-func (t *MockNode) Start(app *App) {}
+func (m *MockNode) Start(app *App) {}
 
-func (t *MockNode) Execute(msg Message, call Caller) (Message, error) {
-	return t.Mock(msg)
+func (m *MockNode) Execute(msg Message, call Caller) (Message, error) {
+	m.Tester.calledMocks[m.MockedModule+"@"+m.MockedAddress] = true
+	return m.Mock(msg)
 }
