@@ -20,6 +20,8 @@ func (t *Tester) Test(module string, node Node) {
 
 	t.address = node.Address()[0]
 	t.module = module
+	t.mocks = map[string]bool{}
+	t.calledMocks = map[string]bool{}
 
 	t.app.RegisterModule(module, []Node{node})
 }
