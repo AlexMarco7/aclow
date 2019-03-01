@@ -200,6 +200,6 @@ func Body(r Message, err error) interface{} {
 
 func check(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 }
