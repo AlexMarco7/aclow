@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/url"
+	"time"
 
 	"github.com/AlexMarco7/aclow"
 )
@@ -26,6 +27,9 @@ func main() {
 		&Ping{},
 		&Pong{},
 	})
+
+	time.Sleep(1 * time.Second)
+	app.Publish("module_name@ping", aclow.Message{Body: int64(0)})
 
 	app.Wait()
 }

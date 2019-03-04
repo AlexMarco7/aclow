@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
+
 	server "github.com/nats-io/gnatsd/server"
 	nats "github.com/nats-io/go-nats"
 )
@@ -34,12 +36,17 @@ type App struct {
 	Config    map[string]interface{}
 	Resources map[string]interface{}
 	NodeMap   map[string]Node
+	Logger    Logger
 }
 
 type Message struct {
 	Header map[string]interface{}
 	Body   interface{}
-	Err    error
+}
+
+type ReplyMessage struct {
+	Message
+	Err error
 }
 
 func (a *App) Start(opt StartOptions) {
@@ -47,6 +54,8 @@ func (a *App) Start(opt StartOptions) {
 	a.Config = make(map[string]interface{})
 	a.Resources = make(map[string]interface{})
 	a.NodeMap = make(map[string]Node)
+
+	a.Logger.start()
 
 	if !opt.Local {
 		a.startServer()
@@ -86,14 +95,30 @@ func (a *App) startClient() {
 
 func (a *App) Publish(address string, msg Message) {
 	localNode := a.NodeMap[address]
+
 	if localNode == nil && !a.opt.Local {
 		a.Conn.Publish(address, msg)
 	} else if localNode == nil {
-		err := fmt.Errorf("Address '%s' not fouund!", address)
+		err := fmt.Errorf("Address '%s' not found!", address)
 		log.Println(err)
 	} else {
-		a.logIt("running ", address)
-		localNode.Execute(msg, a.makeCaller(address))
+		executionID := uuid.New().String()
+		a.logIt(Log{
+			logType:     "starting-execution",
+			executionID: executionID,
+			address:     address,
+			message:     msg,
+		})
+
+		reply, err := localNode.Execute(msg, a.makeCaller(address, executionID))
+
+		a.logIt(Log{
+			logType:     "ending-execution",
+			executionID: executionID,
+			address:     address,
+			message:     reply,
+			err:         err,
+		})
 	}
 }
 
@@ -102,16 +127,35 @@ func (a *App) Call(address string, msg Message) (Message, error) {
 	var err error
 	localNode := a.NodeMap[address]
 	if localNode == nil && !a.opt.Local {
-		err = a.Conn.Request(address, msg, &r, time.Second*30)
-		if r.Err != nil {
-			return Message{}, r.Err
+		replyMsg := ReplyMessage{}
+		err = a.Conn.Request(address, msg, &replyMsg, time.Second*30)
+		if replyMsg.Err != nil {
+			return Message{}, replyMsg.Err
 		}
+		r.Body = replyMsg.Body
+		r.Header = replyMsg.Header
 		return r, err
 	} else if localNode == nil {
-		return Message{}, fmt.Errorf(fmt.Sprintf("Address '%s' not fouund!", address))
+		return Message{}, fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
 	} else {
-		a.logIt("running ", address)
-		return localNode.Execute(msg, a.makeCaller(address))
+		executionID := uuid.New().String()
+		a.logIt(Log{
+			logType:     "starting-execution",
+			executionID: executionID,
+			address:     address,
+			message:     msg,
+		})
+
+		reply, err := localNode.Execute(msg, a.makeCaller(address, executionID))
+		a.logIt(Log{
+			logType:     "ending-execution",
+			executionID: executionID,
+			address:     address,
+			message:     reply,
+			err:         err,
+		})
+
+		return reply, err
 	}
 }
 
@@ -120,27 +164,38 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 		//go func(n Node) {
 		for _, addr := range n.Address() {
 			nodeAddress := moduleName + "@" + addr
-			a.logIt("starting ", nodeAddress)
 
 			a.NodeMap[nodeAddress] = n
 
 			if !a.opt.Local {
 				_, err := a.Conn.QueueSubscribe(nodeAddress, moduleName, func(_, reply string, msg Message) {
-					a.logIt("running ", nodeAddress)
+
+					executionID := uuid.New().String()
+					a.logIt(Log{
+						logType:     "starting-execution",
+						executionID: executionID,
+						address:     nodeAddress,
+						message:     msg,
+					})
 
 					go func(msg Message) {
-						caller := a.makeCaller(nodeAddress)
+						caller := a.makeCaller(nodeAddress, executionID)
 
 						result, err := n.Execute(msg, caller)
 
+						a.logIt(Log{
+							logType:     "ending-execution",
+							executionID: executionID,
+							address:     nodeAddress,
+							message:     result,
+							err:         err,
+						})
+
 						if err != nil {
-							a.logIt(nodeAddress, " ", err.Error())
 							if reply != "" {
-								a.logIt(nodeAddress, " replying error")
-								a.Conn.Publish(reply, Message{Err: err})
+								a.Conn.Publish(reply, ReplyMessage{Err: err})
 							}
 						} else if reply != "" {
-							a.logIt(nodeAddress, " replying success")
 							a.Conn.Publish(reply, result)
 						}
 					}(msg)
@@ -154,22 +209,38 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 
 		}
 
-		n.Start(a)
+		go n.Start(a)
 
 		//}(n)
 	}
 }
 
-func (a *App) makeCaller(fromAddress string) Caller {
+func (a *App) makeCaller(fromAddress string, executionID string) Caller {
 	return func(address string, m Message) (Message, error) {
-		a.logIt(fromAddress, " calling ", address)
-		return a.Call(address, m)
+		a.logIt(Log{
+			logType:          "starting-call",
+			executionID:      executionID,
+			executionAddress: fromAddress,
+			address:          address,
+			message:          m,
+		})
+		reply, err := a.Call(address, m)
+		log.Println(err)
+		a.logIt(Log{
+			logType:          "receiving-call-response",
+			executionID:      executionID,
+			executionAddress: fromAddress,
+			address:          address,
+			message:          reply,
+			err:              err,
+		})
+		return reply, err
 	}
 }
 
-func (a *App) logIt(values ...interface{}) {
+func (a *App) logIt(logMsg Log) {
 	if a.opt.Debug {
-		log.Print(values...)
+		a.Logger.logIt(logMsg)
 	}
 }
 
