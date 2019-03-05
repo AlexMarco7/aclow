@@ -1,6 +1,7 @@
 package aclow
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -21,8 +22,16 @@ type Log struct {
 }
 
 func (l *Logger) logIt(logMsg Log) {
-	log.Println(logMsg)
-	l.remoteWriter(fmt.Sprintf("%#v", logMsg))
+	json, _ := json.Marshal(map[string]string{
+		"log_type":          logMsg.logType,
+		"execution_id":      logMsg.executionID,
+		"execution_address": logMsg.executionAddress,
+		"address":           logMsg.address,
+		"message":           fmt.Sprintf("%#v", logMsg.message),
+		"error":             fmt.Sprintf("%#v", logMsg.err),
+	})
+	log.Println("aclow:>>>" + string(json))
+	l.remoteWriter("aclow:>>>" + string(json))
 }
 
 func (l *Logger) start() {
