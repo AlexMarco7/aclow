@@ -19,7 +19,7 @@ func (t *Pong) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, err
 	log.Print("pong ", count)
 
 	time.Sleep(1 * time.Second)
-	if count >= 1000 {
+	if count >= 1 {
 		return msg, nil
 	}
 

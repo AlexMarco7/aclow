@@ -19,7 +19,7 @@ func (t *Ping) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, err
 	log.Print("ping ", count)
 
 	time.Sleep(1 * time.Second)
-	if count >= 1000 {
+	if count >= 1 {
 		return msg, nil
 	}
 	return call("module_name@pong", aclow.Message{Body: count + 1})

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	testgen "github.com/AlexMarco7/aclow/pkg/test-gen"
+	"github.com/AlexMarco7/aclow"
 )
 
 func main() {
@@ -12,5 +12,5 @@ func main() {
 
 	flag.Parse()
 
-	testgen.Generate(*src, *dest)
+	aclow.GenerateTests(*src, *dest)
 }

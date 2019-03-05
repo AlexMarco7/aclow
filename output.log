@@ -1,0 +1,9 @@
+2019/03/05 00:22:25 aclow:>>>{"address":"module_name@ping","error":"\u003cnil\u003e","execution_address":"","execution_id":"3ceacf46-f420-40aa-8cd2-53686f56f562","log_type":"starting-execution","message":"aclow.Message{Header:map[string]interface {}(nil), Body:0}"}
+2019/03/05 00:22:25 ping 0
+2019/03/05 00:22:26 aclow:>>>{"address":"module_name@pong","error":"\u003cnil\u003e","execution_address":"module_name@ping","execution_id":"3ceacf46-f420-40aa-8cd2-53686f56f562","log_type":"starting-call","message":"aclow.Message{Header:map[string]interface {}(nil), Body:1}"}
+2019/03/05 00:22:26 aclow:>>>{"address":"module_name@pong","error":"\u003cnil\u003e","execution_address":"","execution_id":"ed0a12ed-2189-44f9-acf1-e05cc38ca1bc","log_type":"starting-execution","message":"aclow.Message{Header:map[string]interface {}(nil), Body:1}"}
+2019/03/05 00:22:26 pong 1
+2019/03/05 00:22:27 aclow:>>>{"address":"module_name@pong","error":"\u003cnil\u003e","execution_address":"","execution_id":"ed0a12ed-2189-44f9-acf1-e05cc38ca1bc","log_type":"ending-execution","message":"aclow.Message{Header:map[string]interface {}(nil), Body:1}"}
+2019/03/05 00:22:27 <nil>
+2019/03/05 00:22:27 aclow:>>>{"address":"module_name@pong","error":"\u003cnil\u003e","execution_address":"module_name@ping","execution_id":"3ceacf46-f420-40aa-8cd2-53686f56f562","log_type":"receiving-call-response","message":"aclow.Message{Header:map[string]interface {}(nil), Body:1}"}
+2019/03/05 00:22:27 aclow:>>>{"address":"module_name@ping","error":"\u003cnil\u003e","execution_address":"","execution_id":"3ceacf46-f420-40aa-8cd2-53686f56f562","log_type":"ending-execution","message":"aclow.Message{Header:map[string]interface {}(nil), Body:1}"}
