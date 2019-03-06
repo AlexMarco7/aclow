@@ -225,7 +225,7 @@ func (a *App) makeCaller(fromAddress string, executionID string) Caller {
 			message:          m,
 		})
 		reply, err := a.Call(address, m)
-		log.Println(err)
+		//log.Println(err)
 		a.logIt(Log{
 			logType:          "receiving-call-response",
 			executionID:      executionID,
