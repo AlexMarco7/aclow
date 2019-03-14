@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/AlexMarco7/aclow"
+	"github.com/queroquitar/aclow"
 )
 
 type Pong struct{}

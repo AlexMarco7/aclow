@@ -5,7 +5,7 @@
             "package ${2:package}",
             "",
             "import (",
-            "    \"github.com/AlexMarco7/aclow\"",
+            "    \"github.com/queroquitar/aclow\"",
             ")",
             "",
             "type ${1:Name} struct{",

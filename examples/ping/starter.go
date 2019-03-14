@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/AlexMarco7/aclow"
+	"github.com/queroquitar/aclow"
 )
 
 func main() {
