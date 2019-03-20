@@ -39,10 +39,15 @@ func (l *Logger) start() {
 }
 
 func startLoggerServer() func(string) {
-	l, err := net.Listen("tcp", "localhost:3333")
-	if err != nil {
-		fmt.Println("Error starting logger server:", err.Error())
-		os.Exit(1)
+	port := 3333
+	for {
+		l, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+		if err != nil {
+			fmt.Println("Error starting logger server:", err.Error())
+			port++
+		} else {
+			break
+		}
 	}
 	connections := []net.Conn{}
 	go func() {
