@@ -274,3 +274,5 @@ func check(err error) {
 		log.Panic(err)
 	}
 }
+
+type Tuple []interface{}
