@@ -73,6 +73,8 @@ func (m *MockNode) Address() []string { return []string{m.MockedAddress} }
 func (m *MockNode) Start(app *App) {}
 
 func (m *MockNode) Execute(msg Message, call Caller) (Message, error) {
+	lock.Lock()
+	defer lock.Unlock()
 	m.Tester.calledMocks[m.MockedModule+"@"+m.MockedAddress] = true
 	return m.Mock(msg)
 }
