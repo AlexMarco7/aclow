@@ -40,8 +40,10 @@ func (l *Logger) start() {
 
 func startLoggerServer() func(string) {
 	port := 3333
+	var l net.Listener
+	var err error
 	for {
-		l, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+		l, err = net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 		if err != nil {
 			fmt.Println("Error starting logger server:", err.Error())
 			port++
