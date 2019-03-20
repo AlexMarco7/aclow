@@ -1,6 +1,9 @@
 package aclow
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 type Tester struct {
 	app         *App
@@ -10,6 +13,8 @@ type Tester struct {
 	mocks       map[string]bool
 	calledMocks map[string]bool
 }
+
+var lock = sync.RWMutex{}
 
 func (t *Tester) Test(module string, node Node) {
 	t.app = &App{}
@@ -27,6 +32,8 @@ func (t *Tester) Test(module string, node Node) {
 }
 
 func (t *Tester) Mock(module string, address string, mock func(Message) (Message, error)) {
+	lock.Lock()
+	defer lock.Unlock()
 	t.mocks[module+"@"+address] = true
 	t.app.RegisterModule(module, []Node{&MockNode{
 		Tester:        t,
@@ -38,6 +45,8 @@ func (t *Tester) Mock(module string, address string, mock func(Message) (Message
 
 func (t *Tester) Run(msg Message, testing *testing.T) {
 	result, err := t.app.Call(t.module+"@"+t.address, msg)
+	lock.RLock()
+	defer lock.RUnlock()
 	for k := range t.mocks {
 		if !t.calledMocks[k] {
 			testing.Errorf("%s wasn't called!", k)
