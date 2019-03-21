@@ -31,11 +31,11 @@ func (l *Logger) logIt(logMsg Log) {
 		"error":             fmt.Sprintf("%#v", logMsg.err),
 	})
 	log.Println("aclow:>>>" + string(json))
-	l.remoteWriter("aclow:>>>" + string(json))
+	//l.remoteWriter("aclow:>>>" + string(json))
 }
 
 func (l *Logger) start() {
-	l.remoteWriter = startLoggerServer()
+	//l.remoteWriter = startLoggerServer()
 }
 
 func startLoggerServer() func(string) {
