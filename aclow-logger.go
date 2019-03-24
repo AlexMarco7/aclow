@@ -31,11 +31,15 @@ func (l *Logger) logIt(logMsg Log) {
 		"error":             fmt.Sprintf("%#v", logMsg.err),
 	})
 	log.Println("aclow:>>>" + string(json))
-	//l.remoteWriter("aclow:>>>" + string(json))
+	l.remoteWriter("aclow:>>>" + string(json))
 }
 
 func (l *Logger) start() {
-	//l.remoteWriter = startLoggerServer()
+	if os.Getenv("ACLOW_REMOTE_LOG") == "true" {
+		l.remoteWriter = startLoggerServer()
+	} else {
+		l.remoteWriter = openLoggerFile()
+	}
 }
 
 func startLoggerServer() func(string) {
@@ -72,6 +76,19 @@ func startLoggerServer() func(string) {
 			c.Write([]byte(log + "\n"))
 		}
 	}
+}
+
+func openLoggerFile() func(string) {
+	file, err := os.Create("aclow.log")
+	if err != nil {
+		fmt.Println("Error open log file: ", err.Error())
+		os.Exit(1)
+	}
+
+	return func(log string) {
+		file.Write([]byte(log + "\n"))
+	}
+
 }
 
 func handleRequest(conn net.Conn) {
