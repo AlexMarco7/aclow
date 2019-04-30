@@ -6,7 +6,7 @@ import (
 )
 
 type Tester struct {
-	app         *App
+	App         *App
 	address     string
 	module      string
 	assertFunc  func(Message, error)
@@ -17,9 +17,9 @@ type Tester struct {
 var lock = sync.RWMutex{}
 
 func (t *Tester) Test(module string, node Node) {
-	t.app = &App{}
+	t.App = &App{}
 
-	t.app.Start(StartOptions{
+	t.App.Start(StartOptions{
 		Local: true,
 	})
 
@@ -28,14 +28,14 @@ func (t *Tester) Test(module string, node Node) {
 	t.mocks = map[string]bool{}
 	t.calledMocks = map[string]bool{}
 
-	t.app.RegisterModule(module, []Node{node})
+	t.App.RegisterModule(module, []Node{node})
 }
 
 func (t *Tester) Mock(module string, address string, mock func(Message) (Message, error)) {
 	lock.Lock()
 	defer lock.Unlock()
 	t.mocks[module+"@"+address] = true
-	t.app.RegisterModule(module, []Node{&MockNode{
+	t.App.RegisterModule(module, []Node{&MockNode{
 		Tester:        t,
 		MockedModule:  module,
 		MockedAddress: address,
@@ -44,7 +44,7 @@ func (t *Tester) Mock(module string, address string, mock func(Message) (Message
 }
 
 func (t *Tester) Run(msg Message, testing *testing.T) {
-	result, err := t.app.Call(t.module+"@"+t.address, msg)
+	result, err := t.App.Call(t.module+"@"+t.address, msg)
 	lock.RLock()
 	defer lock.RUnlock()
 	for k := range t.mocks {
