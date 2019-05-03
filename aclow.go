@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -102,6 +103,16 @@ func (a *App) Publish(address string, msg Message) {
 		err := fmt.Errorf("Address '%s' not found!", address)
 		log.Println(err)
 	} else {
+		var err error
+
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Recovered:", r)
+				log.Println(string(debug.Stack()))
+				err = fmt.Errorf("Error on call: %v", localNode.Address())
+			}
+		}()
+
 		executionID := uuid.New().String()
 		a.logIt(Log{
 			logType:     "starting-execution",
@@ -122,9 +133,7 @@ func (a *App) Publish(address string, msg Message) {
 	}
 }
 
-func (a *App) Call(address string, msg Message) (Message, error) {
-	var r Message
-	var err error
+func (a *App) Call(address string, msg Message) (r Message, err error) {
 	localNode := a.NodeMap[address]
 	if localNode == nil && !a.opt.Local {
 		replyMsg := ReplyMessage{}
@@ -138,6 +147,14 @@ func (a *App) Call(address string, msg Message) (Message, error) {
 	} else if localNode == nil {
 		return Message{}, fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
 	} else {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Recovered:", r)
+				log.Println(string(debug.Stack()))
+				err = fmt.Errorf("Error on call: %v", localNode.Address())
+			}
+		}()
+
 		executionID := uuid.New().String()
 		a.logIt(Log{
 			logType:     "starting-execution",
@@ -179,6 +196,14 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 					})
 
 					go func(msg Message) {
+						defer func() {
+							if r := recover(); r != nil {
+								log.Println("Recovered:", r)
+								log.Println(string(debug.Stack()))
+								a.Conn.Publish(reply, ReplyMessage{Err: fmt.Errorf("Error on call: %v", n.Address())})
+							}
+						}()
+
 						caller := a.makeCaller(nodeAddress, executionID)
 
 						result, err := n.Execute(msg, caller)
