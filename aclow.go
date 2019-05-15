@@ -130,6 +130,11 @@ func (a *App) Publish(address string, msg Message) {
 			message:     reply,
 			err:         err,
 		})
+
+		if err != nil {
+			log.Println("Error executing:", address)
+			log.Println(string(debug.Stack()))
+		}
 	}
 }
 
@@ -171,6 +176,11 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 			message:     reply,
 			err:         err,
 		})
+
+		if err != nil {
+			log.Println("Error executing:", address)
+			log.Println(string(debug.Stack()))
+		}
 
 		return reply, err
 	}
@@ -217,6 +227,9 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 						})
 
 						if err != nil {
+							log.Println("Error executing:", nodeAddress)
+							log.Println(string(debug.Stack()))
+
 							if reply != "" {
 								a.Conn.Publish(reply, ReplyMessage{Err: err})
 							}
