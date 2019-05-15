@@ -178,7 +178,7 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 		})
 
 		if err != nil {
-			log.Println("Error executing:", address)
+			log.Println("Error executing:", address, " => ", err.Error())
 			log.Println(string(debug.Stack()))
 		}
 
