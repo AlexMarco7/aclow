@@ -38,6 +38,7 @@ type App struct {
 	Resources map[string]interface{}
 	NodeMap   map[string]Node
 	Logger    Logger
+	onError   func(address string, err error)
 }
 
 type Message struct {
@@ -150,7 +151,11 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 		r.Header = replyMsg.Header
 		return r, err
 	} else if localNode == nil {
-		return Message{}, fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
+		err := fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
+		if a.onError != nil {
+			go func() { a.onError(address, err) }()
+		}
+		return Message{}, err
 	} else {
 		defer func() {
 			if r := recover(); r != nil {
@@ -180,6 +185,9 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 		if err != nil {
 			log.Println("Error executing:", address, " => ", err.Error())
 			log.Println(string(debug.Stack()))
+			if a.onError != nil {
+				go func() { a.onError(address, err) }()
+			}
 		}
 
 		return reply, err
@@ -229,6 +237,9 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 						if err != nil {
 							log.Println("Error executing:", nodeAddress)
 							log.Println(string(debug.Stack()))
+							if a.onError != nil {
+								go func() { a.onError(nodeAddress, err) }()
+							}
 
 							if reply != "" {
 								a.Conn.Publish(reply, ReplyMessage{Err: err})
