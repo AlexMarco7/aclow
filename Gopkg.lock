@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:28e2af906774577e67db741d0aff5f49216c4fea2f0388e5bb34eceb1743b548"
+  name = "github.com/AlexMarco7/aclow"
+  packages = ["."]
+  pruneopts = ""
+  revision = "65c1acb73f60452b8fe5a347ede67bc1bbaa318a"
+
+[[projects]]
   digest = "1:ad92aa49f34cbc3546063c7eb2cabb55ee2278b72842eda80e2a20a8a06a8d73"
   name = "github.com/google/uuid"
   packages = ["."]
@@ -23,7 +31,7 @@
   version = "v1.4.1"
 
 [[projects]]
-  digest = "1:5aa6d4cc61e7a5902b3975845f1f5e64429df92d33e8ef989f6ca7b0aa5d2ac2"
+  digest = "1:2b5ed2cf6e8623bddd5653cffb8c6e462c2390b70186eb01546539aa177bb194"
   name = "github.com/nats-io/go-nats"
   packages = [
     ".",
@@ -31,8 +39,8 @@
     "util",
   ]
   pruneopts = ""
-  revision = "13c7fc7590db68b18f2015600f8765a02d705b5d"
-  version = "v1.7.0"
+  revision = "70fe06cee50d4b6f98248d9675fb55f2a3aa7228"
+  version = "v1.7.2"
 
 [[projects]]
   digest = "1:0006112541eed60bdfa279c8965c038865f05a677d980305dae7a0eec5bd133c"
@@ -43,16 +51,16 @@
   version = "v0.0.2"
 
 [[projects]]
-  digest = "1:be61e8224b84064109eaba8157cbb4bbe6ca12443e182b6624fdfa1c0dcf53d9"
+  digest = "1:9abd194bb617fe4df66607ca59812ca91caeb2053c8c9869d3507939bb63cc0b"
   name = "github.com/nats-io/nuid"
   packages = ["."]
   pruneopts = ""
-  revision = "289cccf02c178dc782430d534e3c1f5b72af807f"
-  version = "v1.0.0"
+  revision = "4b96681fa6d28dd0ab5fe79bac63b3a493d9ee94"
+  version = "v1.0.1"
 
 [[projects]]
   branch = "master"
-  digest = "1:ee71b3559000aca2562869f53fe762743e84bf4f0993240d4c2e37f9122a032b"
+  digest = "1:5b3e9450868bcf9ecbca2b01ac04f142255b5744d89ec97e1ceedf57d4522645"
   name = "golang.org/x/crypto"
   packages = [
     "bcrypt",
@@ -61,11 +69,11 @@
     "ed25519/internal/edwards25519",
   ]
   pruneopts = ""
-  revision = "193df9c0f06f8bb35fba505183eaf0acc0136505"
+  revision = "22d7a77e9e5f409e934ed268692e56707cd169e5"
 
 [[projects]]
   branch = "master"
-  digest = "1:c05d7df4515a5ade109706194fbda5cfd23c1754b26e17b012281c2d247c01d9"
+  digest = "1:e58995028b90bb1d69bf0968e3f8c2543d5a9db78d1206c2b3d2571a0b8b4a88"
   name = "golang.org/x/sys"
   packages = [
     "windows",
@@ -76,12 +84,13 @@
     "windows/svc/mgr",
   ]
   pruneopts = ""
-  revision = "3b5209105503162ded1863c307ac66fec31120dd"
+  revision = "9cd6430ef91e39e1a0ec0470cf1321a33ef1b887"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/AlexMarco7/aclow",
     "github.com/google/uuid",
     "github.com/nats-io/gnatsd/server",
     "github.com/nats-io/go-nats",
