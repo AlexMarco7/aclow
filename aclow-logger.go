@@ -37,7 +37,7 @@ func (l *Logger) logIt(logMsg Log) {
 func (l *Logger) start() {
 	if os.Getenv("ACLOW_REMOTE_LOG") == "true" {
 		l.remoteWriter = startLoggerServer()
-	} else {
+	} else if os.Getenv("ACLOW_LOG") == "true" {
 		l.remoteWriter = openLoggerFile()
 	}
 }
