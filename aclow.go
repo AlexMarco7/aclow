@@ -38,7 +38,7 @@ type App struct {
 	Resources map[string]interface{}
 	NodeMap   map[string]Node
 	Logger    Logger
-	OnError   func(address string, err error)
+	OnError   func(address string, msg Message, err error)
 }
 
 type Message struct {
@@ -153,7 +153,7 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 	} else if localNode == nil {
 		err := fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
 		if a.OnError != nil {
-			go func() { a.OnError(address, err) }()
+			go func() { a.OnError(address, msg, err) }()
 		}
 		return Message{}, err
 	} else {
@@ -186,7 +186,7 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 			log.Println("Error executing:", address, " => ", err.Error())
 			log.Println(string(debug.Stack()))
 			if a.OnError != nil {
-				go func() { a.OnError(address, err) }()
+				go func() { a.OnError(address, msg, err) }()
 			}
 		}
 
@@ -238,7 +238,7 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 							log.Println("Error executing:", nodeAddress)
 							log.Println(string(debug.Stack()))
 							if a.OnError != nil {
-								go func() { a.OnError(nodeAddress, err) }()
+								go func() { a.OnError(nodeAddress, msg, err) }()
 							}
 
 							if reply != "" {
