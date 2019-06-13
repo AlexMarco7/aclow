@@ -110,7 +110,10 @@ func (a *App) Publish(address string, msg Message) {
 			if r := recover(); r != nil {
 				log.Println("Recovered:", r)
 				log.Println(string(debug.Stack()))
-				err = fmt.Errorf("Error on call: %v", localNode.Address())
+				err := fmt.Errorf("Panic error on call: %v \n %v", localNode.Address(), string(debug.Stack()))
+				if a.OnError != nil {
+					go func() { a.OnError(address, msg, err) }()
+				}
 			}
 		}()
 
@@ -149,6 +152,13 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 		}
 		r.Body = replyMsg.Body
 		r.Header = replyMsg.Header
+		if err != nil {
+			log.Println("Error executing:", address, " => ", err.Error())
+			log.Println(string(debug.Stack()))
+			if a.OnError != nil {
+				go func() { a.OnError(address, msg, err) }()
+			}
+		}
 		return r, err
 	} else if localNode == nil {
 		err := fmt.Errorf(fmt.Sprintf("Address '%s' not found!", address))
@@ -161,7 +171,10 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 			if r := recover(); r != nil {
 				log.Println("Recovered:", r)
 				log.Println(string(debug.Stack()))
-				err = fmt.Errorf("Error on call: %v", localNode.Address())
+				err := fmt.Errorf("Panic error on call: %v \n %v", localNode.Address(), string(debug.Stack()))
+				if a.OnError != nil {
+					go func() { a.OnError(address, msg, err) }()
+				}
 			}
 		}()
 
@@ -218,7 +231,11 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 							if r := recover(); r != nil {
 								log.Println("Recovered:", r)
 								log.Println(string(debug.Stack()))
-								a.Conn.Publish(reply, ReplyMessage{Err: fmt.Errorf("Error on call: %v", n.Address())})
+								err := fmt.Errorf("Panic error on call: %v \n %v", nodeAddress, string(debug.Stack()))
+								if a.OnError != nil {
+									go func() { a.OnError(nodeAddress, msg, err) }()
+								}
+								a.Conn.Publish(reply, ReplyMessage{Err: err})
 							}
 						}()
 
