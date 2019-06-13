@@ -110,7 +110,7 @@ func (a *App) Publish(address string, msg Message) {
 			if r := recover(); r != nil {
 				log.Println("Recovered:", r)
 				log.Println(string(debug.Stack()))
-				err := fmt.Errorf("Panic error on call: %v \n %v", localNode.Address(), string(debug.Stack()))
+				err := fmt.Errorf("Panic error on call: %v %v \n %v", localNode.Address(), r, string(debug.Stack()))
 				if a.OnError != nil {
 					go func() { a.OnError(address, msg, err) }()
 				}
@@ -171,7 +171,7 @@ func (a *App) Call(address string, msg Message) (r Message, err error) {
 			if r := recover(); r != nil {
 				log.Println("Recovered:", r)
 				log.Println(string(debug.Stack()))
-				err := fmt.Errorf("Panic error on call: %v \n %v", localNode.Address(), string(debug.Stack()))
+				err := fmt.Errorf("Panic error on call: %v %v \n %v", localNode.Address(), r, string(debug.Stack()))
 				if a.OnError != nil {
 					go func() { a.OnError(address, msg, err) }()
 				}
@@ -231,7 +231,7 @@ func (a *App) RegisterModule(moduleName string, nodes []Node) {
 							if r := recover(); r != nil {
 								log.Println("Recovered:", r)
 								log.Println(string(debug.Stack()))
-								err := fmt.Errorf("Panic error on call: %v \n %v", nodeAddress, string(debug.Stack()))
+								err := fmt.Errorf("Panic error on call: %v %v \n %v", nodeAddress, r, string(debug.Stack()))
 								if a.OnError != nil {
 									go func() { a.OnError(nodeAddress, msg, err) }()
 								}
