@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/AlexMarco7/aclow"
+	"github.com/lfigueiredo82/aclow"
 )
 
 type Ping struct{}

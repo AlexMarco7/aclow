@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/AlexMarco7/aclow"
+	"github.com/lfigueiredo82/aclow"
 )
 
 func main() {
