@@ -1,4 +1,4 @@
-module github.com/marcosbatista-qq/aclow
+module github.com/queroquitar/aclow
 
 go 1.12
 
