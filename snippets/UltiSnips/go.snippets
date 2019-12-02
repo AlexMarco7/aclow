@@ -1,0 +1,62 @@
+# Aclow Snippet For Go
+# Reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L813
+# install the snippet in ~/.vim/UltiSnips
+
+snippet action "Create a Aclow action" b
+package action
+
+type ${1:Action} struct {
+	app  *aclow.App
+}
+
+func (n *$1) Address() []string { return []string{"`!p snake_case(snip, 1)`"} }
+
+func (n *$1) Start(app *aclow.App) {
+	n.app = app
+}
+
+func (n *$1) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {
+
+	return aclow.Message{}, nil
+}
+endsnippet
+
+snippet flow "Create a Aclow flow" b
+package flow
+
+type ${1:Flow} struct {
+	app  *aclow.App
+}
+
+func (n *$1) Address() []string { return []string{"`!p snake_case(snip, 1)`"} }
+
+func (n *$1) Start(app *aclow.App) {
+	n.app = app
+}
+
+func (n *$1) Execute(msg aclow.Message, call aclow.Caller) (aclow.Message, error) {
+
+	return aclow.Message{}, nil
+}
+endsnippet
+
+snippet err "Error in Aclow" b
+if err != nil {
+	return aclow.Message{}, err
+}
+endsnippet
+
+# Global 
+
+global !p
+
+import re
+
+def snake_case(snip, pos):
+	#convert to snakecase
+	txt = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", t[pos])
+	snip.rv = re.sub("([a-z0-9])([A-Z])", r"\1_\2", txt).lower()
+
+endglobal
+
+# vim:ft=snippets:
