@@ -39,6 +39,8 @@ func (l *Logger) start() {
 		l.remoteWriter = startLoggerServer()
 	} else if os.Getenv("ACLOW_LOG") == "true" {
 		l.remoteWriter = openLoggerFile()
+	} else {
+		l.remoteWriter = func(s string) { log.Println(s) }
 	}
 }
 
