@@ -35,26 +35,6 @@
   version = "v1.7.2"
 
 [[projects]]
-  digest = "1:5006310dbd3124c74528c50f5bb6bbdbb95b0972e87669c4b5b95bf8b8023668"
-  name = "github.com/nats-io/jwt"
-  packages = ["."]
-  pruneopts = ""
-  revision = "8527407e521556b9f0253318912cc03fd84a5bbd"
-  version = "v1.0.1"
-
-[[projects]]
-  digest = "1:e0e2507bbab0fff32dd0e084123a1b3f80898afd8967e631ebca2452482185a5"
-  name = "github.com/nats-io/nats.go"
-  packages = [
-    ".",
-    "encoders/builtin",
-    "util",
-  ]
-  pruneopts = ""
-  revision = "120703c6d80965e2f1e7a542c88dc574987b17e1"
-  version = "v1.10.0"
-
-[[projects]]
   digest = "1:f5df948c12bbeb2c2b878e54c24368abe6f1ec75cf689ef492880f39c135c941"
   name = "github.com/nats-io/nkeys"
   packages = ["."]
@@ -106,7 +86,6 @@
     "github.com/google/uuid",
     "github.com/nats-io/gnatsd/server",
     "github.com/nats-io/go-nats",
-    "github.com/nats-io/nats.go",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
