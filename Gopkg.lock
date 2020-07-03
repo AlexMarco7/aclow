@@ -35,12 +35,12 @@
   version = "v1.7.2"
 
 [[projects]]
-  digest = "1:0006112541eed60bdfa279c8965c038865f05a677d980305dae7a0eec5bd133c"
+  digest = "1:f5df948c12bbeb2c2b878e54c24368abe6f1ec75cf689ef492880f39c135c941"
   name = "github.com/nats-io/nkeys"
   packages = ["."]
   pruneopts = ""
-  revision = "1546a3320a8f195a5b5c84aef8309377c2e411d5"
-  version = "v0.0.2"
+  revision = "3653aeb9baf610b5d160bbafc89e3470a47e08c8"
+  version = "v0.2.0"
 
 [[projects]]
   digest = "1:9abd194bb617fe4df66607ca59812ca91caeb2053c8c9869d3507939bb63cc0b"
@@ -52,7 +52,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5b3e9450868bcf9ecbca2b01ac04f142255b5744d89ec97e1ceedf57d4522645"
+  digest = "1:69a98da9ff007d76f7297d7d3504164c9155f389958a71b4e8ec590762773c56"
   name = "golang.org/x/crypto"
   packages = [
     "bcrypt",
@@ -61,13 +61,14 @@
     "ed25519/internal/edwards25519",
   ]
   pruneopts = ""
-  revision = "22d7a77e9e5f409e934ed268692e56707cd169e5"
+  revision = "75b288015ac94e66e3d6715fb68a9b41bf046ec2"
 
 [[projects]]
   branch = "master"
-  digest = "1:e58995028b90bb1d69bf0968e3f8c2543d5a9db78d1206c2b3d2571a0b8b4a88"
+  digest = "1:e00435f76d40ca8b876004dfbac59262ad102a19a5223bd52781101cf00833c6"
   name = "golang.org/x/sys"
   packages = [
+    "internal/unsafeheader",
     "windows",
     "windows/registry",
     "windows/svc",
@@ -76,7 +77,7 @@
     "windows/svc/mgr",
   ]
   pruneopts = ""
-  revision = "9cd6430ef91e39e1a0ec0470cf1321a33ef1b887"
+  revision = "ddb9806d33aed8dbaac1cd6f1cba58952e87f933"
 
 [solve-meta]
   analyzer-name = "dep"
