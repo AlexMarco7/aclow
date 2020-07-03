@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  digest = "1:28e2af906774577e67db741d0aff5f49216c4fea2f0388e5bb34eceb1743b548"
-  name = "github.com/AlexMarco7/aclow"
-  packages = ["."]
-  pruneopts = ""
-  revision = "65c1acb73f60452b8fe5a347ede67bc1bbaa318a"
-
-[[projects]]
   digest = "1:ad92aa49f34cbc3546063c7eb2cabb55ee2278b72842eda80e2a20a8a06a8d73"
   name = "github.com/google/uuid"
   packages = ["."]
@@ -90,7 +82,6 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/AlexMarco7/aclow",
     "github.com/google/uuid",
     "github.com/nats-io/gnatsd/server",
     "github.com/nats-io/go-nats",
