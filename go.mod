@@ -1,9 +1,8 @@
-module github.com/queroquitar/aclow
+module github.com/AlexMarco7/aclow
 
 go 1.12
 
 require (
-	github.com/AlexMarco7/aclow v0.0.0-20190425162109-65c1acb73f60
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/nats-io/gnatsd v1.4.1
