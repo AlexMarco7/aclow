@@ -1,5 +1,3 @@
-github.com/AlexMarco7/aclow v0.0.0-20190425162109-65c1acb73f60 h1:jhRVO24VNTW0czKV3DQGq2OMoAKDFoXuh14xpl4lLrA=
-github.com/AlexMarco7/aclow v0.0.0-20190425162109-65c1acb73f60/go.mod h1:YNK3mlkU2DKuqiktjC7G032NeR6zZFg5myyTgzJx4YE=
 github.com/golang/protobuf v1.3.2 h1:6nsPYzhq5kReh6QImI3k5qWzO4PEbvbIW2cwSfR/6xs=
 github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
